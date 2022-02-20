@@ -28,7 +28,6 @@ CREATE TABLE cities
   countryID int,
   FOREIGN KEY (countryID)
     REFERENCES countries (id)
- 
 );
 
 
@@ -53,6 +52,9 @@ CREATE TABLE departures
   id SERIAL PRIMARY KEY,
   ticketID int,
   cityID int,
+  countryID int,
+  FOREIGN KEY (countryID)
+    REFERENCES countries (id),
   FOREIGN KEY (ticketID)
     REFERENCES tickets (id),
    FOREIGN KEY (cityID)
@@ -66,6 +68,9 @@ CREATE TABLE destinations
   id SERIAL PRIMARY KEY,
   ticketID int,
   cityID int,
+  countryID int,
+  FOREIGN KEY (countryID)
+    REFERENCES countries (id),
   FOREIGN KEY (ticketID)
     REFERENCES tickets (id),
    FOREIGN KEY (cityID)
@@ -140,32 +145,45 @@ VALUES
 
 
 INSERT INTO departures
-  (ticketID, cityID)
+  (ticketID, cityID, countryID)
 VALUES
-  (1,  1),
-  (2, 10),
-  (3,  4),
-  (4,  5),
-  (5,  11),
-  (6,  12),
-  (7,  6),
-  (8,  7),
-  (9, 8),
-  (10, 13);
-
+  (1,  1,1),
+  (2, 10,2),
+  (3,  4,1),
+  (4,  5,1),
+  (5,  11,3),
+  (6,  12,4),
+  (7,  6,1),
+  (8,  7,1),
+  (9, 8,1),
+  (10, 13,5);
 
 
 INSERT INTO destinations
-  (ticketID, cityID)
+  (ticketID, cityID, countryID)
 VALUES
-  (1, 5),
-  (2, 14),
-  (3, 9),
-  (4, 15),
-  (5, 16),
-  (6, 17),
-  (7, 8),
-  (8, 2),
-  (9, 3),
-  (10,18);
+  (1, 5,1),
+  (2, 14,6),
+  (3, 9,1),
+  (4, 15,7),
+  (5, 16,8),
+  (6, 17,9),
+  (7, 8,1),
+  (8, 2,1),
+  (9, 3,1),
+  (10,18,10);
 
+---Query to get the initial values
+
+ SELECT first_name, last_name, seat, departure, arrival, airline,
+        ci.city as city_from, co.country as country_from, 
+        c.city as city_to, ct.country as country_to
+FROM tickets t
+JOIN airlines a ON t.airlineID = a.id
+JOIN departures d ON d.ticketID = t.id
+JOIN destinations ds ON ds.ticketID = t.id
+JOIN cities ci ON ci.id = d.cityID
+JOIN countries co ON co.id = d.countryID
+JOIN cities c ON c.id = ds.cityID
+JOIN countries ct ON ct.id = ds.countryID
+;
