@@ -7,10 +7,19 @@ CREATE DATABASE music;
 
 \c music
 
-CREATE TABLE artists
+CREATE TABLE types
 (
   id SERIAL PRIMARY KEY,
-  artist TEXT NOT NULL
+  type TEXT NOT NULL
+   
+);
+CREATE TABLE users
+(
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  typeID int,
+  FOREIGN KEY (typeID)
+      REFERENCES types (id),
    
 );
 
@@ -21,12 +30,6 @@ CREATE TABLE albums
    
 );
 
-CREATE TABLE producers
-(
-  id SERIAL PRIMARY KEY,
-  producer TEXT NOT NULL
-   
-);
 
 CREATE TABLE songs
 (
@@ -34,56 +37,26 @@ CREATE TABLE songs
   title TEXT NOT NULL,
   duration_in_seconds INTEGER NOT NULL,
   release_date DATE NOT NULL,
-  artistID INT,
+  userID INT,
   albumID INT,
-  producerID INT,
 
-  FOREIGN KEY (artistID)
-      REFERENCES artists (id),
+  FOREIGN KEY (userID)
+      REFERENCES users (id),
   FOREIGN KEY (albumID)
-      REFERENCES albums (id) ,
-  FOREIGN KEY (producerID)
-      REFERENCES producers (id)   
+      REFERENCES albums (id) 
 );
 
-CREATE TABLE song_artist
+CREATE TABLE song_users
 (
   songID int, 
-  artistID int,
+  userID int,
   FOREIGN KEY (songID)
       REFERENCES songs (id),
-  FOREIGN KEY (artistID)
-      REFERENCES artists (id)  
+  FOREIGN KEY (userID)
+      REFERENCES users (id)  
 
 );
 
-CREATE TABLE song_producer
-(
-  songID int, 
-  producerID int,
-  FOREIGN KEY (songID)
-      REFERENCES songs (id),
-  FOREIGN KEY (producerID)
-      REFERENCES producers (id)  
-
-);
-
-INSERT INTO producers
-    (producer)
-VALUES
-    ('Dust Brothers'),
-    ('Stephen Lironi'),
-    ('Roy Thomas Baker'),
-    ('Walter Afanasieff'),
-    ('Benjamin Rice'),
-    ('Rick Parashar'),
-    ('Al Shux'),
-    ('Max Martin'),
-    ('Cirkut'),
-    ('Shellback'),
-    ('Benny Blanco'),
-    ('The Matrix'),
-    ('Darkchild') ;   
 
 INSERT INTO albums
     (album)
@@ -100,24 +73,37 @@ VALUES
     ('The Writing''s on the Wall');
        
 
-INSERT INTO artists
-    (artist)
+INSERT INTO users
+    (name, typeID)
 VALUES
-    ('Hanson'),
-    ('Queen'),
-    ('Mariah Cary'),
-    ('Boyz II Men'),
-    ('Lady Gaga'),
-    ('Bradley Cooper'),
-    ('Nickelback'),
-    ('Jay Z'),
-    ('Alicia Keys'),
-    ('Katy Perry'),
-    ('Juicy J'),
-    ('Maroon 5'),
-    ('Christina Aguilera'),
-    ('Avril Lavigne'),
-    ('Destiny''s Child');
+    ('Hanson',1),
+    ('Queen',1),
+    ('Mariah Cary',1),
+    ('Boyz II Men',1),
+    ('Lady Gaga',1),
+    ('Bradley Cooper',1),
+    ('Nickelback',1),
+    ('Jay Z',1),
+    ('Alicia Keys',1),
+    ('Katy Perry',1),
+    ('Juicy J',1),
+    ('Maroon 5',1),
+    ('Christina Aguilera',1),
+    ('Avril Lavigne',1),
+    ('Destiny''s Child',1),
+    ('Dust Brothers',2),
+    ('Stephen Lironi',2),
+    ('Roy Thomas Baker',2),
+    ('Walter Afanasieff',2),
+    ('Benjamin Rice',2),
+    ('Rick Parashar',2),
+    ('Al Shux',2),
+    ('Max Martin',2),
+    ('Cirkut',2),
+    ('Shellback',2),
+    ('Benny Blanco',2),
+    ('The Matrix',2),
+    ('Darkchild',2) ;  
 
 
 
@@ -135,24 +121,7 @@ VALUES
   ('Complicated', 244, '05-14-2002',  9),
   ('Say My Name', 240, '11-07-1999',  10);
 
-INSERT INTO    song_producer
-VALUES
-    (1,1),
-    (1,2),
-    (2,3),
-    (3,4),
-    (4,5),
-    (5,6),   
-    (6,7),
-    (7,8),
-    (7,9),
-    (8,10),
-    (8,11),
-    (9,12),
-    (10,13);
-
-
-INSERT INTO  song_artist
+INSERT INTO    song_users
 VALUES
     (1,1),
     (2,2),
@@ -168,4 +137,19 @@ VALUES
     (8,12),
     (8,13),
     (9,14),
-    (10,15);     
+    (10,15)
+    (1,16),
+    (1,17),
+    (2,18),
+    (3,19),
+    (4,20),
+    (5,21),   
+    (6,22),
+    (7,23),
+    (7,24),
+    (8,25),
+    (8,26),
+    (9,27),
+    (10,28);
+
+

@@ -14,6 +14,7 @@ CREATE TABLE airlines
  
 );
 
+
 CREATE TABLE countries
 (
   id SERIAL PRIMARY KEY,
@@ -30,7 +31,22 @@ CREATE TABLE cities
     REFERENCES countries (id)
 );
 
-
+CREATE TABLE flights
+(
+  id SERIAL PRIMARY KEY,
+  departure_date TIMESTAMP NOT NULL,
+  arrival_date TIMESTAMP NOT NULL,
+  airlineID int,
+  departure_city int ,
+  destination_city int,
+ 
+  FOREIGN KEY (departure_city)
+    REFERENCES cities (id),
+  FOREIGN KEY (destination_city)
+    REFERENCES cities (id)  ,
+  FOREIGN KEY (airlineID)
+    REFERENCES airlines (id)    
+);
 
 CREATE TABLE tickets
 (
@@ -38,45 +54,17 @@ CREATE TABLE tickets
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   seat TEXT NOT NULL,
-  departure TIMESTAMP NOT NULL,
-  arrival TIMESTAMP NOT NULL,
-  airlineID int,
-   FOREIGN KEY (airlineID)
-    REFERENCES airlines (id) 
+  flightID int,
+  FOREIGN KEY (flightID)
+    REFERENCES flights (id)   
+  --departure TIMESTAMP NOT NULL,
+  --arrival TIMESTAMP NOT NULL,
+ -- airlineID int,
+   --FOREIGN KEY (airlineID)
+   -- REFERENCES airlines (id) 
        
 );
 
-
-CREATE TABLE departures
-(
-  id SERIAL PRIMARY KEY,
-  ticketID int,
-  cityID int,
-  countryID int,
-  FOREIGN KEY (countryID)
-    REFERENCES countries (id),
-  FOREIGN KEY (ticketID)
-    REFERENCES tickets (id),
-   FOREIGN KEY (cityID)
-    REFERENCES cities (id)     
- 
-);
-
-
-CREATE TABLE destinations
-(
-  id SERIAL PRIMARY KEY,
-  ticketID int,
-  cityID int,
-  countryID int,
-  FOREIGN KEY (countryID)
-    REFERENCES countries (id),
-  FOREIGN KEY (ticketID)
-    REFERENCES tickets (id),
-   FOREIGN KEY (cityID)
-    REFERENCES cities (id)     
- 
-);
 
 INSERT INTO airlines
     (airline)
@@ -128,62 +116,31 @@ VALUES
     ('Beijing',9) ,
     ('Santiago',10);  
 
+ 
+INSERT INTO flights
+  (departure_date, arrival_date, airlineID, departure_city, destination_city  )
+VALUES
+  ( '2018-04-08 09:00:00', '2018-04-08 12:00:00', 1, 1, 5 ),
+  ( '2018-12-19 12:45:00', '2018-12-19 16:15:00', 2, 10, 14),
+  ( '2018-01-02 07:00:00', '2018-01-02 08:03:00', 3, 4, 9),
+  ( '2018-04-15 16:50:00', '2018-04-15 21:00:00', 3, 5, 15),
+  ( '2018-08-01 18:30:00', '2018-08-01 21:50:00', 4, 11,16),
+  ( '2018-10-31 01:15:00', '2018-10-31 12:55:00', 5, 12, 17),
+  ( '2019-02-06 06:00:00', '2019-02-06 07:47:00', 1, 6, 8),
+  ( '2018-12-22 14:42:00', '2018-12-22 15:56:00', 6, 7, 2),
+  ( '2019-02-06 16:28:00', '2019-02-06 19:18:00', 6, 8, 3),
+  ( '2019-01-20 19:30:00', '2019-01-20 22:45:00', 7, 13, 18);    
+
 INSERT INTO tickets
-  (first_name, last_name, seat, departure, arrival, airlineID)
+  (first_name, last_name, seat, flightID)
 VALUES
-  ('Jennifer', 'Finch', '33B', '2018-04-08 09:00:00', '2018-04-08 12:00:00', 1 ),
-  ('Thadeus', 'Gathercoal', '8A', '2018-12-19 12:45:00', '2018-12-19 16:15:00', 2),
-  ('Sonja', 'Pauley', '12F', '2018-01-02 07:00:00', '2018-01-02 08:03:00', 3),
-  ('Jennifer', 'Finch', '20A', '2018-04-15 16:50:00', '2018-04-15 21:00:00', 3),
-  ('Waneta', 'Skeleton', '23D', '2018-08-01 18:30:00', '2018-08-01 21:50:00', 4),
-  ('Thadeus', 'Gathercoal', '18C', '2018-10-31 01:15:00', '2018-10-31 12:55:00', 5),
-  ('Berkie', 'Wycliff', '9E', '2019-02-06 06:00:00', '2019-02-06 07:47:00', 1),
-  ('Alvin', 'Leathes', '1A', '2018-12-22 14:42:00', '2018-12-22 15:56:00', 6),
-  ('Berkie', 'Wycliff', '32B', '2019-02-06 16:28:00', '2019-02-06 19:18:00', 6),
-  ('Cory', 'Squibbes', '10D', '2019-01-20 19:30:00', '2019-01-20 22:45:00', 7);
-
-
-
-INSERT INTO departures
-  (ticketID, cityID, countryID)
-VALUES
-  (1,  1,1),
-  (2, 10,2),
-  (3,  4,1),
-  (4,  5,1),
-  (5,  11,3),
-  (6,  12,4),
-  (7,  6,1),
-  (8,  7,1),
-  (9, 8,1),
-  (10, 13,5);
-
-
-INSERT INTO destinations
-  (ticketID, cityID, countryID)
-VALUES
-  (1, 5,1),
-  (2, 14,6),
-  (3, 9,1),
-  (4, 15,7),
-  (5, 16,8),
-  (6, 17,9),
-  (7, 8,1),
-  (8, 2,1),
-  (9, 3,1),
-  (10,18,10);
-
----Query to get the initial values
-
- SELECT first_name, last_name, seat, departure, arrival, airline,
-        ci.city as city_from, co.country as country_from, 
-        c.city as city_to, ct.country as country_to
-FROM tickets t
-JOIN airlines a ON t.airlineID = a.id
-JOIN departures d ON d.ticketID = t.id
-JOIN destinations ds ON ds.ticketID = t.id
-JOIN cities ci ON ci.id = d.cityID
-JOIN countries co ON co.id = d.countryID
-JOIN cities c ON c.id = ds.cityID
-JOIN countries ct ON ct.id = ds.countryID
-;
+  ('Jennifer', 'Finch', '33B',  1 ),
+  ('Thadeus', 'Gathercoal', '8A',   2),
+  ('Sonja', 'Pauley', '12F',  3),
+  ('Jennifer', 'Finch', '20A',  4),
+  ('Waneta', 'Skeleton', '23D', 5),
+  ('Thadeus', 'Gathercoal', '18C', 6),
+  ('Berkie', 'Wycliff', '9E',   7),
+  ('Alvin', 'Leathes', '1A', 8),
+  ('Berkie', 'Wycliff', '32B', 9),
+  ('Cory', 'Squibbes', '10D', 10);
