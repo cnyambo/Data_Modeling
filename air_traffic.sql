@@ -57,12 +57,7 @@ CREATE TABLE tickets
   flightID int,
   FOREIGN KEY (flightID)
     REFERENCES flights (id)   
-  --departure TIMESTAMP NOT NULL,
-  --arrival TIMESTAMP NOT NULL,
- -- airlineID int,
-   --FOREIGN KEY (airlineID)
-   -- REFERENCES airlines (id) 
-       
+
 );
 
 
